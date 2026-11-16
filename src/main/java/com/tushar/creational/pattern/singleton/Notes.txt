@@ -1,0 +1,82 @@
+Q: When constructor executed then we can say object is created?
+A: No, we can't say everytime constructor gets executed means object is created.
+Scenario 1: Constructor gets executed but object is not created.
+If we have abstract class with constructor and this abstract class having child class and if child class calls the
+constructor of abstract class it doesn't mean that abstract class object is created.
+
+Scenario 2: Without executing constructor object gets created.
+In process of deserialization without execution of constructor object gets created.
+In process of cloning without execution of constructor object gets created.
+
+======================================================================================================================
+To break the singleton class. It will not work in multithreading environment.
+
+For this we have below solutions.
+1.Using synchronized static factory method.
+2.Using synchronized block inside the static factory method.
+3.Using synchronized block with double null check inside the static factory method. (Best 1)
+4.Using eager instantiation.
+5.Using inner class based lazy instantiation. (Best 2)
+6.Using ENUM type singleton. (Best 3)
+
+======================================================================================================================
+Race condition: When 2 threads trying to update the same object data is called race condition.
+Example: int count = 0 now thread1 and thread2 both try to update the count but they both acquired the same count value
+i.e 0 and try to update the value should be after 2 thread increment should be 2 but it is 1.
+
+Re-entrant lock: Suppose thread1 calls method1 and in method1 it calls method2 i.e called as re-entrant locking.
+
+synchronized method:
+synchronized(this) vs synchronized(Xyz.class): this works for object level locking and works simultaneously in multithreaded
+environment and class level locking works at a time in multithreaded environment.
+
+Marker Interface: It is empty interface by seeing this interface as a tag or identity some runtime capabilities are
+provided to it.
+This capabilities provided by JVM or Java runtime, Java library, Framework, Container or application server.
+Example:
+java.lang.Cloneable
+java.io.Serializable
+
+If our Singleton class extends some other class which implementing the Cloneable marker interface then our Singleton
+class objects get created. Is it possible?
+
+Object class (Parent of all class) it contains clone() method.(protected native Object clone() throws CloneNotSupportedException;)
+             |
+CommonUtil implements Cloneable (By default Object class is extended) (clone method is protected and it is visible to immediate sub class and hence only visible in CommonUtil class not in entire hierarchy.)
+             |
+SingletonTest (Our class) (Here clone method is not present)
+
+Note: In Cloning and DeSerialization why constructor is not getting executed?
+The reason is already some object is created using constructor and for that object initialization is also done for its
+member and in Cloning or DeSerialization we are creating the object which is already created using the constructor so why we need constructor
+execution during object Cloning and DeSerialization.
+
+Serialization: The process of converting java object's data into stream of bits and bytes is called as serialization.
+DeSerialization: The process of collecting stream of bits and bytes from network or file and creating new objects which having
+that data is called DeSerialization.
+Solution in Deserialization:
+    When readObject() method is called then this method internally calls the readResolve() method. You can throw exception with
+    Deserialization is not supported or you can return already created object.
+
+    Interesting part: Java didn't defines readResolve() in any class or interface but when we do deserialization java calls "private Object readResolve()"
+    then this method check user defined any readResolve() with proper definition because it having metadata so if the method match the signature
+    then the readResolve() gets called. This checking is done using reflection concept internally.
+    During serialization also same type of thing happens but it uses  "private Object writeReplace()" method.
+
+Difference between Singleton Scope and Singleton Class?
+Singleton Scope means it can create multiple object but we want only one.
+Singleton class means it can create one and only one object not possible to create multiple objects.
+
+In which situation we can create Singleton class?
+1.Class is not having state.
+2.Class is having read only state.
+3.Class is having shareable data and need to maintain consistency.
+
+What is difference between Singleton Class and Utility Class?
+For Singleton class we can create maximum one object and it may contain static and non static methods.
+Ex: Logger, Runtime etc.
+For Utility class it only contains static method and there is no need to create the object for Utility class.
+Ex: System, DriverManager, IoUtils, Collections, Arrays, DateUtils, StringUtil etc.
+
+Note: From Java 8 use Interface as Utility because it supports static method and we don't need object for utility
+class hence it is recommended.
